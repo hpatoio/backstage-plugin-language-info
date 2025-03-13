@@ -21,6 +21,9 @@ jobs:
       - name: Install dependencies
         run: yarn install
 
+      - name: Run TypeScript checks
+        run: yarn tsc
+
       - name: Lint the code
         run: yarn lint
 
