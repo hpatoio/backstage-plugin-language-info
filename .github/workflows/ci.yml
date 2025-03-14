@@ -52,21 +52,7 @@ jobs:
           node-version: 20
           registry-url: 'https://registry.npmjs.org/'
 
-      - name: Get package version
-        id: package
-        run: echo "version=$(jq -r .version package.json)" >> $GITHUB_ENV
-
       - name: Publish to npm
-        run: yarn publish --access public
+        run: yarn publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-
-      - name: Create GitHub Release
-        uses: ncipollo/release-action@v1
-        with:
-          tag: v${{ env.version }}
-          name: Release v${{ env.version }}
-          body: "Automated release of version v${{ env.version }}"
-          draft: false
-          prerelease: false
-          token: ${{ secrets.PUBLISH_ARTIFACT_TOKEN }}
