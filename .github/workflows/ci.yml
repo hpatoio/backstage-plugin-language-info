@@ -74,4 +74,4 @@ jobs:
           body: "Automated release of version v${{ env.version }}"
           draft: false
           prerelease: false
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.PUBLISH_ARTIFACT_TOKEN }}
