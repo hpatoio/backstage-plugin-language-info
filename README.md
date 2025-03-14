@@ -9,7 +9,7 @@ Add a card component that add language info on the "Overview" page.
 1. Install the plugin
 
 ```
-yarn add @hpatoio/language-info
+yarn --cwd packages/app add @hpatoio/plugin-language-info
 ```
 
 2. Modify your entity page
