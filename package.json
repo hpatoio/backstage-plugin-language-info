@@ -26,7 +26,8 @@
     "clean": "backstage-cli package clean",
     "prepack": "backstage-cli package prepack",
     "postpack": "backstage-cli package postpack",
-    "tsc": "tsc"
+    "tsc": "tsc",
+    "publish": "npm publish"
   },
   "dependencies": {
     "@backstage/core-components": "^0.16.4",
