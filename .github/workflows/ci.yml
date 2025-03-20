@@ -1,0 +1,80 @@
+name: CI & Publish
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: yarn install
+
+      - name: Run TypeScript checks
+        run: yarn tsc:full
+
+      - name: Lint the code
+        run: yarn lint:all
+
+      - name: Run tests
+        run: yarn test
+
+      - name: Build the plugin
+        run: yarn build
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: backstage-plugin-build
+          path: |
+            .
+            !node_modules
+
+  release:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push'
+    steps:
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: backstage-plugin-build
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          registry-url: "https://registry.npmjs.org/"
+
+
+      - name: Set up jq
+        run: sudo apt-get install -y jq
+
+      - name: Get version from lerna.json
+        id: get_version
+        run: echo "VERSION=$(jq -r .version lerna.json)" >> $GITHUB_ENV
+
+      - name: Create Git tag
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git tag "$VERSION"
+          git push origin "$VERSION"
+
+      - name: Publish to npm.js
+        run: yarn publish:npm
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
