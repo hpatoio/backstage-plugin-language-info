@@ -1,0 +1,1 @@
+export { EntityLanguageInfoCard } from "./EntityLanguageInfoCard";

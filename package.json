@@ -1,0 +1,40 @@
+{
+  "name": "@hpatoio/backstage-plugin-language-info",
+  "version": "1.0.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/haptoio/backstage-plugin-language-info.git"
+  },
+  "license": "Apache-2.0",
+  "devDependencies": {
+    "@backstage/cli": "^0.29.0",
+    "husky": "^9.1.7",
+    "lerna": "8.1.9",
+    "typescript": "5.8.2"
+  },
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "tsc:full": "tsc --skipLibCheck true --incremental false",
+    "lint": "backstage-cli repo lint",
+    "prettier:check": "npx --yes prettier --check .",
+    "lint:all": "yarn lint && yarn prettier:check",
+    "test": "CI=true lerna --scope '@hpatoio/*' run test",
+    "build": "lerna run build",
+    "publish:npm": "lerna publish from-package --force-publish --yes",
+    "prettier:fix": "npx --yes prettier --write .",
+    "lint:fix": "backstage-cli repo lint --fix",
+    "prepare": "husky",
+    "clean": "backstage-cli repo clean"
+  },
+  "files": [
+    "packages/*/dist",
+    "dist-types/*/dist",
+    "LICENSE"
+  ],
+  "lint-staged": {
+    "*": "yarn lint:all"
+  },
+  "packageManager": "yarn@4.7.0"
+}
