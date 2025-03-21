@@ -1,4 +1,4 @@
-# Language info
+# Language info processor
 
 This plugin add a processor that extract the version of the language used by the service.
 
@@ -22,4 +22,4 @@ backend.add(import("@hpatoio/backstage-plugin-language-info-processor"));
 
 # Dependencies
 
-This plugin requires [`@hpatoio/backstage-plugin-language-info-processor`](../backstage-plugin-language-info-card).
+This plugin requires [`@hpatoio/backstage-plugin-language-info-card`](../backstage-plugin-language-info-card).
