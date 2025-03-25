@@ -4,7 +4,7 @@ COMMIT_MSG_FILE=$1
 COMMIT_MSG=$(cat "$COMMIT_MSG_FILE")
 
 # Regex for Conventional Commits
-CONVENTIONAL_COMMIT_REGEX="^(feat|fix|chore|docs|style|refactor|perf|test|ci|build|revert)(\(.+\))?!?: .{1,}$"
+CONVENTIONAL_COMMIT_REGEX="^(\[release\]|feat|fix|chore|docs|style|refactor|perf|test|ci|build|revert)(\(.+\))?!?: .{1,}$"
 
 if ! echo "$COMMIT_MSG" | grep -Eq "$CONVENTIONAL_COMMIT_REGEX"; then
   echo -e "\n❌ Invalid commit message format!"
