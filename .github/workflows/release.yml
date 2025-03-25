@@ -1,0 +1,73 @@
+name: Release
+
+on:
+  pull_request:
+    types:
+      - closed
+    paths:
+      - lerna.json
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    needs: build
+    if: github.event.pull_request.merged == true
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Set up jq
+        run: sudo apt-get install -y jq
+
+      - name: Get the previous version from lerna.json
+        run: |
+          git fetch --depth=2
+          PREV_VERSION=$(git show HEAD~1:lerna.json | jq -r '.version' || echo "Cannot find version in lerna.json ")
+          echo "Previous version: $PREV_VERSION"
+          echo "CURRENT_VERSION=$(jq -r '.version' lerna.json)" >> $GITHUB_ENV
+          echo "PREV_VERSION=$PREV_VERSION" >> $GITHUB_ENV
+
+      - name: Check if version changed
+        run: |
+          if [[ "$PREV_VERSION" != "$CURRENT_VERSION" && "$PREV_VERSION" != "not_found" ]]; then
+            echo "Version has changed: $PREV_VERSION -> $CURRENT_VERSION"
+            exit 0
+          else
+            echo "No version change. Not releasing to npmjs."
+            exit 1
+          fi
+
+      - name: Create Release Tag
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            await github.rest.git.createRef({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              ref: `refs/tags/${CURRENT_VERSION}`,
+              sha: context.sha
+            });
+
+            console.log(`Created tag: ${CURRENT_VERSION}`);
+
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: backstage-plugin-build
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          registry-url: "https://registry.npmjs.org/"
+
+      - name: Install dependencies
+        run: yarn install
+
+      - name: Publish to npm.js
+        run: yarn publish:npm
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
