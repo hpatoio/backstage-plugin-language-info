@@ -1,0 +1,17 @@
+#!/bin/sh
+
+COMMIT_MSG_FILE=$1
+COMMIT_MSG=$(cat "$COMMIT_MSG_FILE")
+
+# Regex for Conventional Commits
+CONVENTIONAL_COMMIT_REGEX="^(feat|fix|chore|docs|style|refactor|perf|test|ci|build|revert)(\(.+\))?!?: .{1,}$"
+
+if ! echo "$COMMIT_MSG" | grep -Eq "$CONVENTIONAL_COMMIT_REGEX"; then
+  echo -e "\n❌ Invalid commit message format!"
+  echo -e "👉 Use Conventional Commits: 'type(scope): message'"
+  echo -e "   Example: 'feat(auth): add login support'"
+  exit 1
+fi
+
+echo "✅ Commit message format is valid."
+exit 0
