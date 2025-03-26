@@ -5,6 +5,7 @@ import {
   UrlReaderService,
 } from "@backstage/backend-plugin-api";
 import { languageInfoPhpReader } from "./LanguageInfoPhpReader";
+import { languageInfoJsReader } from "./LanguageInfoJsReader";
 
 export class LanguageInfoProcessor implements CatalogProcessor {
   logger: RootLoggerService;
@@ -38,6 +39,22 @@ export class LanguageInfoProcessor implements CatalogProcessor {
         ...(entity.metadata.annotations || {}),
         "language-info/name": "PHP",
         "language-info/version": phpVersion,
+      };
+    }
+
+    if (entity.metadata.tags?.includes("js") && location.type === "url") {
+      this.logger.info("LanguageInfoProcessor JS tag found.");
+
+      const nodeVersion = await languageInfoJsReader(
+        location.target,
+        this.urlReader,
+        this.logger,
+      );
+
+      entity.metadata.annotations = {
+        ...(entity.metadata.annotations || {}),
+        "language-info/name": "JS",
+        "language-info/version": nodeVersion,
       };
     }
 

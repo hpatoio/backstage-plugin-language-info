@@ -5,6 +5,7 @@ This plugin add a processor that extract the version of the language used by the
 **Available processor** | More will come
 
 - PHP | Search the PHP version in the `composer.json` file for components tagged with `php`
+- JS | Search the Node version in the `package.json` file for components tagged with `js`
 
 ## Installation
 
